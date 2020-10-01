@@ -92,3 +92,8 @@ local.properties
 .cache-main
 .scala_dependencies
 .worksheet
+
+# Eclipse auto generated file
+
+.project
+.classpath

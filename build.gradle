@@ -5,13 +5,16 @@
  * Learn how to create Gradle builds at https://guides.gradle.org/creating-new-gradle-builds
  */
 
-allprojects  {
-    repositories {
-        jcenter()
-    }
+plugins {
+    id 'idea'
+    id 'java'
+}
 
-    tasks.withType(JavaCompile) {
-        options.encoding = 'UTF-8'
-    }    
+allprojects  {
+    gradle.projectsEvaluated {
+        tasks.withType(JavaCompile) {
+            options.encoding = 'UTF-8'
+        }
+    }
 }
 

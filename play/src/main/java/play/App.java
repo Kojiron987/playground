@@ -3,12 +3,103 @@
  */
 package play;
 
+import java.lang.Thread.UncaughtExceptionHandler;
+import java.util.Timer;
+import java.util.TimerTask;
+
 public class App {
-    public String getGreeting() {
-        return "Hello world.";
+    public static void main(String[] args) {
+        Timer scheduler = new Timer();
+        Task t = new Task();
+        RealTask r = new RealTask();
+        t.setTask(r);
+
+        try {
+            scheduler.scheduleAtFixedRate(t, 0, 1000);
+        } catch (Exception e) {
+            System.out.println("Error");
+            e.printStackTrace();
+        }
     }
 
-    public static void main(String[] args) {
-        System.out.println(Greeting.greeting());
+    private static class Task extends TimerTask{
+        private RealTask rt;
+
+        public Task() { }
+
+        public void setTask(RealTask rt) {
+            this.rt = rt;
+        }
+
+        @Override
+        public void run() {
+            try {
+                Thread.sleep(2000);
+
+                Thread t = new Thread(rt);
+                t.setUncaughtExceptionHandler(new CatchException());
+                t.start();
+            } catch (Exception e) {
+                System.out.println("Error at middle run");
+            }
+        }
+    }
+
+    private static class CatchException implements UncaughtExceptionHandler {
+        @Override
+        public void uncaughtException(Thread t, Throwable e) {
+            System.out.println("ohge");
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static class RealTask implements Runnable {
+        private int daa = 0;
+        private boolean isRunning = false;
+
+        @Override
+        public void run() {
+            if(!getLock()){
+                int print = incrDaa();
+                System.out.println(print + ".");
+                if (print == 3) {
+                    throw new RuntimeException("例外テスト");
+                }
+                return;
+            }
+
+            try {
+                // 何か重たい処理
+                resetDar();
+                System.out.println("だー!");
+                Thread.sleep(3000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+                throw new RuntimeException(e);
+            } finally {
+                release();
+            }
+        }
+
+        private synchronized int incrDaa() {
+            daa++;
+            return daa;
+        }
+
+        private synchronized void resetDar() {
+            daa = 0;
+        }
+
+        private synchronized boolean getLock() {
+            if (isRunning){
+                return false;
+            }
+            isRunning = true;
+            return true;
+        }
+
+        private synchronized void release() {
+            isRunning = false;
+        }
     }
 }

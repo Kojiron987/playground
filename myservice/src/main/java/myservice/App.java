@@ -9,6 +9,11 @@ public class App {
     }
 
     public static void main(String[] args) {
-        System.out.println(new App().getGreeting());
+        var props = System.getProperties();
+
+        for (var key : props.keySet()) {
+            System.out.println(key + "=" + props.getProperty((String)key));
+        }
+
     }
 }
