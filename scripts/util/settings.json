@@ -1,0 +1,12 @@
+{
+    "common": {
+        "group": "com.example",
+        "commonJar": "Foo.jar"
+    },
+    "config": {
+        "projectName": "Service",
+        "packageName": "service",
+        "serviceName": "Test",
+        "startArgs": "hoge;foo"
+    }
+}
